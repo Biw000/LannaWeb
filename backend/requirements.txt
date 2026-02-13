@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+torch
+torchvision
+pillow
+sqlalchemy
+psycopg2-binary
+python-dotenv
