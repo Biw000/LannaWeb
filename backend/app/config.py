@@ -12,14 +12,14 @@ class Settings:
     ENV: str = os.getenv("ENV", "dev")
     DEBUG: bool = os.getenv("DEBUG", "false").lower() == "true"
 
-    # ========================
-    # 🗄 Database
-    # ========================
-    DATABASE_URL: str = os.getenv("DATABASE_URL")
+  # ==========================
+# Database
+# ==========================
 
-    if not DATABASE_URL:
-        raise ValueError("DATABASE_URL is not set!")
-
+    DATABASE_URL: str = os.getenv(
+    "DATABASE_URL",
+    "sqlite:///./app.db"
+    )
     # ========================
     # 🔐 JWT
     # ========================
