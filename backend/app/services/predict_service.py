@@ -3,12 +3,11 @@ from app.ml.inference import predict
 
 _model = None
 
-def get_model():
-    global _model
-    if _model is None:
-        _model = load_model()
-    return _model
-
 def predict_image(image):
-    model = get_model()
-    return predict(model, image)
+    global _model
+
+    if _model is None:
+        print("🔥 Lazy loading model...")
+        _model = load_model()
+
+    return predict(_model, image)
