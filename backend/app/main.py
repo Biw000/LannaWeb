@@ -17,7 +17,7 @@ app = FastAPI(title="Flower Veg Enterprise API")
 # =========================
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # ⚠️ production ควรกำหนด domain จริง
+    allow_origins=["*"],  # ชั่วคราวเพื่อทดสอบ
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
