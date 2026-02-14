@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+
 export default function Upload() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -30,30 +33,32 @@ export default function Upload() {
       setLoading(true);
       setError("");
 
-      const res = await fetch("http://127.0.0.1:8000/predict/", {
+      const res = await fetch(`${API_BASE}/predict/`, {
         method: "POST",
         body: formData,
       });
 
-      if (!res.ok) throw new Error("Upload failed");
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text);
+      }
 
       const data = await res.json();
       setResult(data);
-    } catch (err) {
-      setError("เกิดข้อผิดพลาดในการอัปโหลด");
+    } catch (err: any) {
+      setError(err.message || "เกิดข้อผิดพลาดในการอัปโหลด");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-lg">
-        <h1 className="text-2xl font-bold mb-6 text-center">
-          🌿 Upload Vegetable Image
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center p-6">
+      <div className="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-lg">
+        <h1 className="text-3xl font-bold mb-6 text-center text-green-700">
+          🌿 Vegetable Classification
         </h1>
 
-        {/* File Input */}
         <div className="mb-4">
           <input
             type="file"
@@ -63,7 +68,6 @@ export default function Upload() {
           />
         </div>
 
-        {/* Preview */}
         {preview && (
           <div className="mb-4 text-center">
             <img
@@ -74,24 +78,23 @@ export default function Upload() {
           </div>
         )}
 
-        {/* Upload Button */}
         <button
           onClick={handleUpload}
           disabled={loading}
-          className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg transition"
+          className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg transition font-semibold"
         >
           {loading ? "🔄 Predicting..." : "🚀 Predict"}
         </button>
 
-        {/* Error */}
         {error && (
-          <div className="mt-4 text-red-500 text-center">{error}</div>
+          <div className="mt-4 text-red-500 text-center font-medium">
+            {error}
+          </div>
         )}
 
-        {/* Result */}
         {result && (
           <div className="mt-6 bg-gray-50 p-4 rounded-lg border">
-            <h3 className="font-semibold mb-2 text-center">
+            <h3 className="font-semibold mb-2 text-center text-green-700">
               🎯 Prediction Result
             </h3>
             <pre className="text-sm bg-black text-green-400 p-3 rounded overflow-x-auto">
@@ -103,4 +106,3 @@ export default function Upload() {
     </div>
   );
 }
-
