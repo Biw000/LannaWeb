@@ -9,9 +9,11 @@ from app.routers.predict_router import router as predict_router
 # =========================
 # Create App
 # =========================
-app = FastAPI(title="Flower Veg Enterprise API")
-
-
+app = FastAPI(
+    title="Flower Veg Enterprise API",
+    docs_url="/docs",
+    redoc_url=None
+)
 # =========================
 # CORS
 # =========================
