@@ -33,9 +33,9 @@ export default function Upload() {
       setLoading(true);
       setError("");
 
-      const res = await fetch(`${API_BASE}/predict/`, {
-        method: "POST",
-        body: formData,
+    const res = await fetch("https://lannaweb.onrender.com/predict/", {
+      method: "POST",
+      body: formData,
       });
 
       if (!res.ok) {
@@ -106,3 +106,4 @@ export default function Upload() {
     </div>
   );
 }
+
