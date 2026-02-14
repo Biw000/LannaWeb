@@ -30,7 +30,7 @@ export default function Upload() {
       setLoading(true);
       setError("");
 
-      const res = await fetch("http://127.0.0.1:8000/predict", {
+      const res = await fetch("http://127.0.0.1:8000/predict/", {
         method: "POST",
         body: formData,
       });
@@ -103,3 +103,4 @@ export default function Upload() {
     </div>
   );
 }
+
