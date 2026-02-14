@@ -6,10 +6,8 @@ _model = None
 def get_model():
     global _model
     if _model is None:
-        print("Loading model...")
         _model = load_model()
     return _model
-
 
 def predict_image(image):
     model = get_model()
