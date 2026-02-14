@@ -2,11 +2,15 @@ from app.ml.model_loader import load_model
 from app.ml.inference import predict
 import torch
 
+
 async def predict_image(file):
+
+    # โหลดโมเดลตอนใช้งานเท่านั้น
     model = load_model()
 
     image_bytes = await file.read()
 
+    # ปิด gradient ลด RAM usage
     with torch.no_grad():
         result = predict(model, image_bytes)
 
