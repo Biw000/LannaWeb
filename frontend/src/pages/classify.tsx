@@ -92,18 +92,31 @@ export default function Upload() {
           </div>
         )}
 
-        {result && (
-          <div className="mt-6 bg-gray-50 p-4 rounded-lg border">
-            <h3 className="font-semibold mb-2 text-center text-green-700">
-              🎯 Prediction Result
-            </h3>
-            <pre className="text-sm bg-black text-green-400 p-3 rounded overflow-x-auto">
-              {JSON.stringify(result, null, 2)}
-            </pre>
-          </div>
-        )}
-      </div>
+{result && (
+  <div className="mt-6 bg-gray-50 p-5 rounded-xl border shadow">
+    <h3 className="text-lg font-bold mb-3 text-green-700 text-center">
+      🎯 Prediction Result
+    </h3>
+
+    <div className="text-center mb-2">
+      <p className="text-xl font-semibold">
+        {result.class_name.replace(/_/g, " ")}
+      </p>
+
+      <p className="text-sm text-gray-500">
+        Confidence: {(result.confidence * 100).toFixed(2)}%
+      </p>
     </div>
-  );
-}
+
+    <div className="w-full bg-gray-200 rounded-full h-3">
+      <div
+        className="bg-green-500 h-3 rounded-full transition-all"
+        style={{
+          width: `${result.confidence * 100}%`,
+        }}
+      ></div>
+    </div>
+  </div>
+)}
+
 
