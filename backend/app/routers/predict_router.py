@@ -12,5 +12,4 @@ async def predict(file: UploadFile = File(...)):
     image = Image.open(io.BytesIO(contents)).convert("RGB")
 
     result = predict_image(image)
-
     return result
