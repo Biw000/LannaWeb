@@ -7,7 +7,7 @@ export default function Home() {
       {/* NAVBAR */}
       <nav className="flex justify-between items-center px-8 py-5 bg-white/70 dark:bg-gray-900/70 backdrop-blur-md shadow-sm">
         <h1 className="text-2xl font-bold text-green-700 dark:text-green-400">
-          🌿 LannaVeg
+          🌿 LannaVegโ
         </h1>
 
         <div className="flex gap-6 text-gray-700 dark:text-gray-300 font-medium">
@@ -31,7 +31,7 @@ export default function Home() {
 
         <div className="mt-10 flex flex-wrap gap-6 justify-center">
 
-          <Link href="/upload">
+          <Link href="/classify">
             <button className="px-8 py-4 bg-green-600 hover:bg-green-700 text-white text-lg font-semibold rounded-xl shadow-lg transition-all duration-300">
               🔍 เริ่มจำแนกผัก
             </button>
@@ -93,3 +93,4 @@ function FeatureCard({ icon, title, description }: any) {
     </div>
   );
 }
+
