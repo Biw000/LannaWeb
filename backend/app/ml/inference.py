@@ -1,3 +1,19 @@
+import torch
+from torchvision import transforms
+import json
+import os
+
+# โหลด class names
+BASE_DIR = os.path.dirname(__file__)
+with open(os.path.join(BASE_DIR, "classes.json"), "r", encoding="utf-8") as f:
+    CLASS_NAMES = json.load(f)
+
+# transform
+transform = transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+])
+
 def predict(model, image):
     image = transform(image).unsqueeze(0)
 
