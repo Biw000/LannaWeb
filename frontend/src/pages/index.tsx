@@ -1,96 +1,130 @@
-import Link from "next/link";
+import React, { useState } from "react";
 
-export default function Home() {
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+
+export default function Classify() {
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [result, setResult] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+    setPreview(URL.createObjectURL(selectedFile));
+    setResult(null);
+    setError("");
+  };
+
+  const handleUpload = async () => {
+    if (!file) {
+      setError("กรุณาเลือกรูปก่อน");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      setLoading(true);
+      setError("");
+      setResult(null);
+
+      const res = await fetch(`${API_BASE}/predict/`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Server error");
+      }
+
+      const data = await res.json();
+      setResult(data);
+    } catch (err: any) {
+      setError(err.message || "เกิดข้อผิดพลาดในการอัปโหลด");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 dark:from-gray-900 dark:to-gray-800 transition-all duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center p-6">
+      <div className="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-lg">
 
-      {/* NAVBAR */}
-      <nav className="flex justify-between items-center px-8 py-5 bg-white/70 dark:bg-gray-900/70 backdrop-blur-md shadow-sm">
-        <h1 className="text-2xl font-bold text-green-700 dark:text-green-400">
-          🌿 LannaVegโ
+        <h1 className="text-3xl font-bold mb-6 text-center text-green-700">
+          🌿 Vegetable Classification
         </h1>
 
-        <div className="flex gap-6 text-gray-700 dark:text-gray-300 font-medium">
-          <Link href="/classify" className="hover:text-green-600 transition">Classify</Link>
-          <Link href="/map" className="hover:text-green-600 transition">Map</Link>
-          <Link href="/login" className="hover:text-green-600 transition">Login</Link>
-        </div>
-      </nav>
-
-      {/* HERO SECTION */}
-      <section className="flex flex-col items-center justify-center text-center px-6 py-24">
-
-        <h2 className="text-5xl md:text-6xl font-extrabold text-green-800 dark:text-green-300 leading-tight">
-          ระบบจำแนกผักพื้นเมืองล้านนา
-        </h2>
-
-        <p className="mt-6 max-w-2xl text-lg text-gray-600 dark:text-gray-400">
-          อัปโหลดรูปภาพเพื่อให้ AI วิเคราะห์ชนิดของผักพื้นเมืองภาคเหนือ
-          พร้อมข้อมูลโภชนาการและแหล่งที่มา
-        </p>
-
-        <div className="mt-10 flex flex-wrap gap-6 justify-center">
-
-          <Link href="/classify">
-            <button className="px-8 py-4 bg-green-600 hover:bg-green-700 text-white text-lg font-semibold rounded-xl shadow-lg transition-all duration-300">
-              🔍 เริ่มจำแนกผัก
-            </button>
-          </Link>
-
-          <Link href="/map">
-            <button className="px-8 py-4 bg-white dark:bg-gray-700 text-green-700 dark:text-green-300 border border-green-500 text-lg font-semibold rounded-xl shadow hover:shadow-lg transition-all duration-300">
-              🗺️ ดูแผนที่ผักพื้นเมือง
-            </button>
-          </Link>
-
+        {/* File Input */}
+        <div className="mb-4">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="w-full border rounded-lg p-2"
+          />
         </div>
 
-      </section>
+        {/* Preview */}
+        {preview && (
+          <div className="mb-4 text-center">
+            <img
+              src={preview}
+              alt="preview"
+              className="mx-auto rounded-lg max-h-64 object-cover shadow"
+            />
+          </div>
+        )}
 
-      {/* FEATURE SECTION */}
-      <section className="px-8 pb-24 grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        {/* Predict Button */}
+        <button
+          onClick={handleUpload}
+          disabled={loading}
+          className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg transition font-semibold"
+        >
+          {loading ? "🔄 AI กำลังวิเคราะห์..." : "🚀 Predict"}
+        </button>
 
-        <FeatureCard
-          icon="🤖"
-          title="AI Accuracy"
-          description="ใช้โมเดล Deep Learning วิเคราะห์ภาพผักอย่างแม่นยำ"
-        />
+        {/* Error */}
+        {error && (
+          <div className="mt-4 text-red-500 text-center font-medium">
+            {error}
+          </div>
+        )}
 
-        <FeatureCard
-          icon="📍"
-          title="Google Maps Integration"
-          description="แสดงตำแหน่งแหล่งผักพื้นเมืองใกล้คุณ"
-        />
+        {/* Result */}
+        {result && (
+          <div className="mt-6 bg-gray-50 p-4 rounded-lg border">
+            <h3 className="font-semibold mb-2 text-center text-green-700">
+              🎯 Prediction Result
+            </h3>
 
-        <FeatureCard
-          icon="📊"
-          title="Nutrition Information"
-          description="ดูข้อมูลคุณค่าทางโภชนาการของผักแต่ละชนิด"
-        />
+            <div className="text-center text-lg font-bold">
+              {result.class_name}
+            </div>
 
-      </section>
+            <div className="text-center text-sm mb-3">
+              Confidence: {(result.confidence * 100).toFixed(2)}%
+            </div>
 
-      {/* FOOTER */}
-      <footer className="text-center py-6 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 text-sm">
-        © {new Date().getFullYear()} LannaVeg Project | University of Phayao
-      </footer>
-
+            {/* Progress Bar */}
+            <div className="w-full bg-gray-200 rounded-full h-4">
+              <div
+                className="bg-green-500 h-4 rounded-full transition-all duration-500"
+                style={{
+                  width: `${(result.confidence * 100).toFixed(2)}%`,
+                }}
+              ></div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
-
-
-function FeatureCard({ icon, title, description }: any) {
-  return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow hover:shadow-xl transition duration-300 text-center">
-      <div className="text-5xl">{icon}</div>
-      <h3 className="mt-4 text-xl font-semibold text-green-700 dark:text-green-400">
-        {title}
-      </h3>
-      <p className="mt-3 text-gray-600 dark:text-gray-400 text-sm">
-        {description}
-      </p>
-    </div>
-  );
-}
-
