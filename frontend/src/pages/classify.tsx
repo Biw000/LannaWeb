@@ -3,7 +3,7 @@ import React, { useState } from "react";
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
-export default function Upload() {
+export default function Classify() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [result, setResult] = useState<any>(null);
@@ -33,14 +33,13 @@ export default function Upload() {
       setLoading(true);
       setError("");
 
-    const res = await fetch("https://lannaweb.onrender.com/predict/", {
-      method: "POST",
-      body: formData,
+      const res = await fetch(`${API_BASE}/predict/`, {
+        method: "POST",
+        body: formData,
       });
 
       if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text);
+        throw new Error("Prediction failed");
       }
 
       const data = await res.json();
@@ -59,14 +58,12 @@ export default function Upload() {
           🌿 Vegetable Classification
         </h1>
 
-        <div className="mb-4">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="w-full border rounded-lg p-2"
-          />
-        </div>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="w-full border rounded-lg p-2 mb-4"
+        />
 
         {preview && (
           <div className="mb-4 text-center">
@@ -92,31 +89,33 @@ export default function Upload() {
           </div>
         )}
 
-{result && (
-  <div className="mt-6 bg-gray-50 p-5 rounded-xl border shadow">
-    <h3 className="text-lg font-bold mb-3 text-green-700 text-center">
-      🎯 Prediction Result
-    </h3>
+        {result && (
+          <div className="mt-6 bg-gray-50 p-5 rounded-xl border shadow">
+            <h3 className="text-lg font-bold mb-3 text-green-700 text-center">
+              🎯 Prediction Result
+            </h3>
 
-    <div className="text-center mb-2">
-      <p className="text-xl font-semibold">
-        {result.class_name.replace(/_/g, " ")}
-      </p>
+            <div className="text-center mb-2">
+              <p className="text-xl font-semibold">
+                {result.class_name.replace(/_/g, " ")}
+              </p>
 
-      <p className="text-sm text-gray-500">
-        Confidence: {(result.confidence * 100).toFixed(2)}%
-      </p>
+              <p className="text-sm text-gray-500">
+                Confidence: {(result.confidence * 100).toFixed(2)}%
+              </p>
+            </div>
+
+            <div className="w-full bg-gray-200 rounded-full h-3">
+              <div
+                className="bg-green-500 h-3 rounded-full transition-all"
+                style={{
+                  width: `${result.confidence * 100}%`,
+                }}
+              ></div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
-
-    <div className="w-full bg-gray-200 rounded-full h-3">
-      <div
-        className="bg-green-500 h-3 rounded-full transition-all"
-        style={{
-          width: `${result.confidence * 100}%`,
-        }}
-      ></div>
-    </div>
-  </div>
-)}
-
-
+  );
+}
